@@ -11,27 +11,28 @@ namespace ChemSharp.PTable.Database;
 public static class DataEntry
 {
     private static SqliteCommand _command;
+    private static List<string> _sqlCommands = new();
     
     public static void DataEntryFlow()
     {
         //uses the Linux default directory for the time being; checks will be made in the future to determine the OS
         //but actually for development it just puts the database in the current directory
-        SqliteConnection connection = Connection.Connect("./ptable.db");
+        SqliteConnection connection = Connection.Connect("/home/laeth/RiderProjects/ChemSharp/ptable.db");
         
         // Open the connection
         connection.Open();
         _command = connection.CreateCommand();
 
         // Create a table if it doesn't exist
-        // schema: atomic_number INTEGER PRIMARY KEY, name TEXT, symbol TEXT, atomic_weight REAL, period INTEGER, group INTEGER, type TEXT (with CHECK)
+        // schema: atomic_number INTEGER PRIMARY KEY, name TEXT, symbol TEXT, atomic_weight REAL, period INTEGER, group INTEGER, type TEXT
         _command.CommandText = "CREATE TABLE IF NOT EXISTS elements (" +
                                "atomic_number INTEGER PRIMARY KEY, " +
                                "name TEXT, " +
                                "symbol TEXT, " +
                                "atomic_weight REAL, " +
                                "period INTEGER, " +
-                               "group INTEGER, " +
-                               "type TEXT CHECK (type IN ('alkali metal', 'alkaline earth metal', 'transition metal', 'post-transition metal', 'metalloid', 'nonmetal', 'noble gas')))";
+                               "\"group\" INTEGER, " +
+                               "type TEXT)";
         _command.ExecuteNonQuery();
         
         // Prerequisites are complete, now start the interactive flow.
@@ -52,43 +53,84 @@ public static class DataEntry
          * Continue this in a while loop until done. Transactions are committed at the end of the flow; SQLite statements are stored in memory until then
          */
 
-        Console.WriteLine("Database connection established. Starting data entry flow.");
+        while (true) {
+            Console.WriteLine("Database connection established. Starting data entry flow.");
 
-        int atomicNumber;
-        string name;
-        string symbol;
-        double atomicWeight;
-        int period;
-        int group;
-        ElementType type;
+            int atomicNumber;
+            string name;
+            string symbol;
+            double atomicWeight;
+            int period;
+            int group;
+            ElementType type;
+
+            CLI.Console.ColorWrite("\nEnter the atomic number: ", ConsoleColor.Blue);
+            atomicNumber = int.Parse(System.Console.ReadLine()!);
+            CLI.Console.ColorWrite("\nEnter the name: ", ConsoleColor.Blue);
+            name = System.Console.ReadLine()!;
+            CLI.Console.ColorWrite("\nEnter the atomic symbol: ", ConsoleColor.Blue);
+            symbol = System.Console.ReadLine()!;
+            CLI.Console.ColorWrite("\nEnter the adjusted atomic weight: ", ConsoleColor.Blue);
+            atomicWeight = double.Parse(System.Console.ReadLine()!);
+            CLI.Console.ColorWrite("\nEnter the period: ", ConsoleColor.Blue);
+            period = int.Parse(System.Console.ReadLine()!);
+            CLI.Console.ColorWrite("\nEnter the group: ", ConsoleColor.Blue);
+            group = int.Parse(System.Console.ReadLine()!);
+            CLI.Console.ColorWrite("The following types of elements are supported:\n" +
+                                   "1. Alkali Metal\n" +
+                                   "2. Alkaline Earth Metal\n" +
+                                   "3. Transition Metal\n" +
+                                   "4. Post-Transition Metal\n" +
+                                   "5. Metalloid\n" +
+                                   "6. Nonmetal\n" +
+                                   "7. Noble Gas\n" +
+                                   "8. Lanthanoid\n" +
+                                   "9. Actinoid\n" +
+                                   "Enter the number corresponding to the type: ", ConsoleColor.Cyan);
+            type = (ElementType)(int.Parse(System.Console.ReadLine()!) - 1);
+
+            // now the data is gathered. Present it to the user and ask for confirmation.
+            Console.WriteLine("Here is the completed entry:");
+
+            // format a nice looking entry
+            var atom = new Atom(name, symbol, atomicNumber, atomicWeight, period, group);
+            CLI.Console.PrintAtom(atom);
+            Console.WriteLine("\nType: " + type);
+            Console.WriteLine("Group: " + group);
+            Console.WriteLine("Period: " + period);
+
+            CLI.Console.ColorWrite("Is this correct? (y/N): ", ConsoleColor.Yellow);
+            string response = Console.ReadLine()!;
+            if (response == "y")
+            {
+                // prepare the SQL statement
+                _sqlCommands.Add(
+                    "INSERT INTO elements (atomic_number, name, symbol, atomic_weight, period, \"group\", type) VALUES " +
+                    $"({atomicNumber}, '{name}', '{symbol}', {atomicWeight}, {period}, {group}, '{type}')");
+                Console.WriteLine("Entry added to the queue. Continue entering elements or type 'done' to finish.");
+                Console.WriteLine("The queue will be committed to the database when you are finished.");
+            }
+            else
+            {
+                Console.WriteLine("Entry discarded.");
+            }
+
+            CLI.Console.ColorWrite("Add another element? (Y/n) ", ConsoleColor.Yellow);
+            string another = Console.ReadLine()!;
+            
+            if (another == "n")
+            {
+                break;
+            }
+
+        }
         
-        CLI.Console.ColorWrite("\nEnter the atomic number: ", ConsoleColor.Blue);
-        atomicNumber = int.Parse(System.Console.ReadLine()!);
-        CLI.Console.ColorWrite("\nEnter the name: ", ConsoleColor.Blue);
-        name = System.Console.ReadLine()!;
-        CLI.Console.ColorWrite("\nEnter the atomic symbol: ", ConsoleColor.Blue);
-        symbol = System.Console.ReadLine()!;
-        CLI.Console.ColorWrite("\nEnter the adjusted atomic weight: ", ConsoleColor.Blue);
-        atomicWeight = double.Parse(System.Console.ReadLine()!);
-        CLI.Console.ColorWrite("\nEnter the period: ", ConsoleColor.Blue);
-        period = int.Parse(System.Console.ReadLine()!);
-        CLI.Console.ColorWrite("\nEnter the group: ", ConsoleColor.Blue);
-        group = int.Parse(System.Console.ReadLine()!);
-        CLI.Console.ColorWrite("The following types of elements are supported:\n" +
-                               "1. Alkali Metal\n" +
-                               "2. Alkaline Earth Metal\n" +
-                               "3. Transition Metal\n" +
-                               "4. Post-Transition Metal\n" +
-                               "5. Metalloid\n" +
-                               "6. Nonmetal\n" +
-                               "7. Noble Gas\n" +
-                               "Enter the number corresponding to the type: ", ConsoleColor.Cyan);
-        type = (ElementType)int.Parse(System.Console.ReadLine()!);
-        
-        // now the data is gathered. Present it to the user and ask for confirmation.
-        Console.WriteLine("Here is the completed entry:");
-        
-        // format a nice looking entry
+        //finally, commit all transactions
+        foreach (var command in _sqlCommands)
+        {
+            _command.CommandText = command;
+            _command.ExecuteNonQuery();
+        }
         
     }
 }

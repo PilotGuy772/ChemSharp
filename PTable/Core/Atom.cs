@@ -19,7 +19,7 @@ public class Atom
         Name = name;
         Symbol = symbol;
         AtomicNumber = atomicNumber;
-        AtomicWeight = atomicWeight;
+        AtomicWeight = Math.Round(atomicWeight, 4); //atomic weight is rounded to four decimal places
         Period = period;
         Group = group;
         Charge = charge;

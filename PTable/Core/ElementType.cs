@@ -11,5 +11,7 @@ public enum ElementType
     PostTransitionMetal,
     Metalloid,
     Nonmetal,
-    NobleGas
+    NobleGas,
+    Lanthanoid,
+    Actinoid
 }
