@@ -11,6 +11,8 @@ public class Compound : IBondable
     public int Charge { get; set; }
     public double MolarMass { get; set; }
     
+    public StateOfMatter State { get; set; }
+    
     public Dictionary<IBondable, int> Components { get; set; }
 
     public Compound(params (IBondable, int)[] components)
@@ -34,5 +36,8 @@ public class Compound : IBondable
         {
             Charge += component.Charge * quantity;
         }
+        
+        // the state of matter gets a bit complicated; we'll save that for the logic-oriented classes to handle at a later time.
+        // state of matter remains unset for now.
     }
 }

@@ -43,6 +43,51 @@ public static class Console
         //and that's it! the atom is printed in a nice, neat box.
     }
     
-    public static string GetOneLiner (Atom atom) => 
+    public static string GetOneLiner (this Atom atom) => 
         $"{atom.AtomicWeight}/{atom.AtomicNumber} {atom.Name} {(atom.Charge != 0 ? atom.Charge > 0 ? Math.Abs(atom.Charge) + "+" : Math.Abs(atom.Charge) + "-" : "")}";
+
+    /// <summary>
+    /// Get the one-line representation of a compound.
+    /// </summary>
+    /// <param name="compound"></param>
+    /// <returns></returns>
+    public static string GetOneLiner(this Compound compound)
+    {
+        // For reference, this is formatted as such:
+        /*
+         * <ion-1><subscript><ion-2><subscript>...<ion-n><subscript> <charge>
+         *
+         * for example, Barium Sulfite would be BaSO3, Aluminum Sulfate would be Al2(SO4)3, and so on.
+         */
+        
+        string result = "";
+        foreach (var (component, quantity) in compound.Components)
+        {
+            if (component is Atom atom)
+            {
+                result += atom.Symbol;
+            }
+            else if (component is Compound subCompound)
+            {
+                //if it's a compound that has a quantity greater than one, we have to wrap it in parentheses
+                if (quantity > 1)
+                {
+                    result += $"({GetOneLiner(subCompound)})";
+                }
+                else
+                {
+                    result += GetOneLiner(subCompound);
+                }
+            }
+            result += quantity == 1 ? "" : quantity.ToString();
+        }
+        
+        if (compound.Charge != 0)
+        {
+            result += " " + (compound.Charge > 0 ? Math.Abs(compound.Charge) + "+" : Math.Abs(compound.Charge) + "-");
+        }
+
+        return result;
+
+    }
 }
