@@ -16,4 +16,18 @@
       <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include=".idea\.idea.ChemSharp\.idea\.gitignore" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\dataSources.local.xml" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\dataSources.xml" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\dataSources\a32be331-0b5c-4e10-b365-3455f0cc014d.xml" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\dataSources\a32be331-0b5c-4e10-b365-3455f0cc014d\storage_v2\_src_\schema\main.uQUzAA.meta" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\encodings.xml" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\indexLayout.xml" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\projectSettingsUpdater.xml" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\sqldialects.xml" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\vcs.xml" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\workspace.xml" />
+    </ItemGroup>
+
 </Project>
