@@ -99,16 +99,16 @@ public static class DataEntry
             Console.WriteLine("Group: " + group);
             Console.WriteLine("Period: " + period);
 
-            CLI.Console.ColorWrite("Is this correct? (y/N): ", ConsoleColor.Yellow);
+            CLI.Console.ColorWrite("Is this correct? (Y/n): ", ConsoleColor.Yellow);
             string response = Console.ReadLine()!;
-            if (response == "y")
+            if (response != "n")
             {
                 // prepare the SQL statement
-                _sqlCommands.Add(
-                    "INSERT INTO elements (atomic_number, name, symbol, atomic_weight, period, \"group\", type) VALUES " +
-                    $"({atomicNumber}, '{name}', '{symbol}', {atomicWeight}, {period}, {group}, '{type}')");
-                Console.WriteLine("Entry added to the queue. Continue entering elements or type 'done' to finish.");
-                Console.WriteLine("The queue will be committed to the database when you are finished.");
+                _command.CommandText = "INSERT INTO elements (atomic_number, name, symbol, atomic_weight, period, \"group\", type) VALUES " +
+                    $"({atomicNumber}, '{name}', '{symbol}', {atomicWeight}, {period}, {group}, '{type}')";
+                _command.ExecuteNonQueryAsync();
+                
+                Console.WriteLine("The entry has been committed to the database.");
             }
             else
             {
