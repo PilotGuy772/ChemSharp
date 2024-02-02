@@ -20,7 +20,7 @@ public static class Query
         // if the connection is null, create a new connection
         if (_connection == null)
         {
-            _connection = Connection.Connect("/home/laeth/RiderProjects/ChemSharp/ptable.db");
+            _connection = Connection.Connect("/Users/laeth/RiderProjects/ChemSharp/ptable.db");
             _connection.Open();
             _command = _connection.CreateCommand();
         }
@@ -89,5 +89,34 @@ public static class Query
         // close the reader and return the atom
         reader.Close();
         return atom;
+    }
+
+    public static Compound GetPolyatomicIonByFormula(string formula)
+    {
+        // this is a simple method to return the first row that has the given formula from the polyatomics table
+        
+        // if the connection is null, create a new connection
+        if (_connection is null)
+        {
+            _connection = Connection.Connect("/Users/laeth/RiderProjects/ChemSharp/ptable.db");
+            _connection.Open();
+            _command = _connection.CreateCommand();
+        }
+        
+        _command!.CommandText = "SELECT 1 FROM polyatomics WHERE formula = @formula";
+        _command.Parameters.AddWithValue("@formula", formula);
+        var reader = _command.ExecuteReader();
+        
+        // if the reader has no rows, the formula does not exist in the database
+        if (!reader.HasRows)
+        {
+            throw new ArgumentException("The formula does not exist in the database.");
+        }
+        
+        // if the reader has rows, read the data and create a new Compound object
+        reader.Read();
+        
+        
+        //when it comes to making the compound, we will need to parse the formula.
     }
 }
