@@ -1,4 +1,5 @@
 using ChemSharp.PTable.Core;
+using ChemSharp.PTable.Database;
 
 namespace ChemSharp.CLI;
 
@@ -159,5 +160,66 @@ public class Parser
     {
         //this version of the method will parse a polyatomic ion
         //this version removes all support for parenthesis because polyatomics don't contain other polyatomics
+
+        string tokenBuffer = "";
+        string previousType = "";
+        Compound compound = new();
+        Atom previousAtom;
+        
+        foreach (char c in formula)
+        {
+            //if the character is an UPPERCASE LETTER, it's the start of a new atomic symbol
+            if (char.IsUpper(c))
+            {
+                //if the previous token was a number, then the token buffer is a coefficient
+                //beware that these are polyatomics!!! so they should NEVER have coefficients
+                if (previousType == "number")
+                {
+                    compound.Coefficient = int.Parse(tokenBuffer);
+                    tokenBuffer = "";
+                }
+                
+                //and now start a new token buffer
+                //this time for a single atomic symbol
+                tokenBuffer += c;
+                previousType = "uppercase";
+            }
+            
+            //if the character is a lowercase letter, it's a continuation of the previous atomic symbol
+            else if (char.IsLower(c))
+            {
+                tokenBuffer += c;
+                previousType = "lowercase";
+            }
+            
+            //finally, if the character is a number, it's a subscript
+            else if (char.IsDigit(c))
+            {
+                //if the previous token was a lowercase letter, then the token buffer is an atomic symbol
+                if (previousType == "lowercase")
+                {
+                    //grab the atomic symbol from the database
+                    previousAtom = Query.GetAtomBySymbol(tokenBuffer);
+                    
+                    //here's the thing though.. we can't add the atom to the compound yet
+                    //because there may be more digits to the subscript
+                    //so let's clear the buffer and add self
+                    tokenBuffer = "";
+                    tokenBuffer += c;
+                }
+                
+                //if the previous token was a number, then we just have a multi-digit subscript
+                if (previousType == "number")
+                {
+                    compound.Coefficient = int.Parse(tokenBuffer);
+                    tokenBuffer = "";
+                }
+                
+                //and now start a new token buffer
+                //this time for a single atomic symbol
+                tokenBuffer += c;
+                previousType = "number";
+            }
+        }
     }
 }
