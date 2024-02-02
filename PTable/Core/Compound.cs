@@ -13,6 +13,8 @@ public class Compound : IBondable
     
     public StateOfMatter State { get; set; }
     
+    public int Coefficient { get; set; }
+    
     public Dictionary<IBondable, int> Components { get; set; }
 
     public Compound(params (IBondable, int)[] components)

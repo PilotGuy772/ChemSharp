@@ -133,4 +133,72 @@ public static class DataEntry
         }
         
     }
+
+    /// <summary>
+    /// Data entry flow for polyatomic ions.
+    /// Polyatomics are stored in their own table.
+    /// </summary>
+    public static void PolyatomicDataEntryFlow()
+    {
+        // polyatomic ions are stored in their own table with their chemical formulae, charges, and names
+        
+        // Schema: name TEXT, formula TEXT, charge INTEGER
+        
+        //open the connetion
+        SqliteConnection connect = Connection.Connect("/Users/laeth/RiderProjects/ChemSharp/ptable.db");
+        connect.Open();
+        _command = connect.CreateCommand();
+        
+        //create the table if it doesn't exist
+        _command.CommandText = "CREATE TABLE IF NOT EXISTS polyatomics (name TEXT, formula TEXT, charge INTEGER)";
+        _command.ExecuteNonQuery();
+        
+        //start the flow
+        Console.WriteLine("Database connection established. Starting polyatomic ion data entry flow.");
+        
+        while (true)
+        {
+            
+            
+            string name;
+            string formula;
+            int charge;
+            
+            CLI.Console.ColorWrite("\nEnter the name of the polyatomic ion: ", ConsoleColor.Blue);
+            name = Console.ReadLine()!;
+            CLI.Console.ColorWrite("\nEnter the chemical formula: ", ConsoleColor.Blue);
+            formula = Console.ReadLine()!;
+            CLI.Console.ColorWrite("\nEnter the charge: ", ConsoleColor.Blue);
+            charge = int.Parse(Console.ReadLine()!);
+            
+            // present the data to the user and ask for confirmation
+            Console.WriteLine("Here is the completed entry:");
+            Console.WriteLine("Name: " + name);
+            Console.WriteLine("Formula: " + formula);
+            Console.WriteLine("Charge: " + charge);
+            CLI.Console.ColorWrite("Is this correct? (Y/n): ", ConsoleColor.Yellow);
+            string response = Console.ReadLine()!;
+            if (response != "n")
+            {
+                // prepare the SQL statement
+                _command.CommandText = "INSERT INTO polyatomics (name, formula, charge) VALUES " +
+                                      $"('{name}', '{formula}', {charge})";
+                _command.ExecuteNonQuery();
+                
+                Console.WriteLine("The entry has been committed to the database.");
+            }
+            else
+            {
+                Console.WriteLine("Entry discarded.");
+            }
+
+            CLI.Console.ColorWrite("Add another polyatomic ion? (Y/n) ", ConsoleColor.Yellow);
+            string another = Console.ReadLine()!;
+            
+            if (another == "n")
+            {
+                break;
+            }
+        }
+    }
 }

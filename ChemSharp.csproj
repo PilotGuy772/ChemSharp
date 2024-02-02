@@ -8,12 +8,45 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Calculator\" />
+      <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.1" />
+      <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.1" />
-      <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.1" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\.gitignore" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\dataSources.local.xml" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\dataSources.xml" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\dataSources\a32be331-0b5c-4e10-b365-3455f0cc014d.xml" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\dataSources\a32be331-0b5c-4e10-b365-3455f0cc014d\storage_v2\_src_\schema\main.uQUzAA.meta" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\encodings.xml" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\indexLayout.xml" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\projectSettingsUpdater.xml" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\sqldialects.xml" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\vcs.xml" />
+      <Content Include=".idea\.idea.ChemSharp\.idea\workspace.xml" />
+      <Content Include="obj\ChemSharp.csproj.nuget.dgspec.json" />
+      <Content Include="obj\ChemSharp.csproj.nuget.g.props" />
+      <Content Include="obj\ChemSharp.csproj.nuget.g.targets" />
+      <Content Include="obj\Debug\net8.0\ChemSharp.AssemblyInfoInputs.cache" />
+      <Content Include="obj\Debug\net8.0\ChemSharp.assets.cache" />
+      <Content Include="obj\Debug\net8.0\ChemSharp.csproj.AssemblyReference.cache" />
+      <Content Include="obj\Debug\net8.0\ChemSharp.GeneratedMSBuildEditorConfig.editorconfig" />
+      <Content Include="obj\project.assets.json" />
+      <Content Include="obj\project.nuget.cache" />
+      <Content Include="obj\project.packagespec.json" />
+      <Content Include="obj\rider.project.model.nuget.info" />
+      <Content Include="obj\rider.project.restore.info" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Include="obj\Debug\net8.0\.NETCoreApp,Version=v8.0.AssemblyAttributes.cs" />
+      <Compile Include="obj\Debug\net8.0\ChemSharp.AssemblyInfo.cs" />
+      <Compile Include="obj\Debug\net8.0\ChemSharp.GlobalUsings.g.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="obj\Debug\net8.0\refint\" />
+      <Folder Include="obj\Debug\net8.0\ref\" />
     </ItemGroup>
 
 </Project>
